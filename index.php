@@ -24,20 +24,9 @@ include_once('./php/connection.php')
             <select name="category" id="categorySelect" autofocus @change="getSelect" v-model="datos.idCayegory">
                 <option value="" selected="true" disabled>--Please select a category--</option>
 
-
-                <?php
-                $query = "SELECT `id`,`name` FROM `category`";
-                $result = mysqli_query($conn, $query);
-
-                if (!$result) {
-                    echo '--ERROR CONNECT--';
-                    return;
-                } else {
-                    while ($values = mysqli_fetch_array($result)) {
-                        echo '<option value="' . $values['id'] . '">' . $values['name'] . '</option>';
-                    }
-                }
-                ?>
+                <option v-for="item in data.category" :value="item.id" >
+                    {{item.name}}
+                </option>
 
             </select>
 
@@ -66,20 +55,30 @@ include_once('./php/connection.php')
 
 
     <div>
-    <table>
+    <table  v-if="comfrimData">
         <tr>
+            <th >
+            <input type="checkbox">
+            </th>
+            <th>#</th>
             <th>name</th>
             <th>price</th>
             <th>description</th>
             <th>code</th>
         </tr>
         <tr v-for=" item in info.dataTable ">
+            <td >
+            <input type="checkbox" :value="item.id" v-model="info.selected" >
+            </td>
+            <td>{{ item.id }}</td>
             <td>{{ item.name }}</td>
             <td>{{item.price}}</td>
             <td>{{item.description}}</td>
             <td>{{item.code}}</td>
         </tr>
         </table>
+
+        <input type="button" value="" @click="generarCodebar">
         
     </div>
     </div>

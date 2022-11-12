@@ -16,14 +16,21 @@ createApp({
 
         const selectSubcategory = ref(false)
         const comfrinCode = ref(false)
-        const comfrinData = ref(true)
+        const comfrimData = ref(false)
 
         let data = reactive({
-            subCategoryData: null
+            subCategoryData: null,
+            category:null
         })
 
         let info = reactive({
-            dataTable: null
+            dataTable: null,
+            selected: [],
+            selectAll: false
+        })
+
+        let dataTable = reactive({
+            id: ''
         })
 
         //LLenar select
@@ -48,6 +55,14 @@ createApp({
                 })
         }
 
+        const getSelect2 = () => {
+
+            axios.get('./php/selectData2.php')
+            .then((res)=>{
+                data.category = res.data
+            })
+        }
+
 
         /* Guardar Productos en la bd */
         const saveProduct = () => {
@@ -63,33 +78,56 @@ createApp({
 
             axios.post('./php/saveProducts.php', form)
                 .then((res) => {
-                    console.log(res)
                      Swal.fire({
                         title: 'Datos Enviados',
                         icon: 'success'
                     }) 
+                    comfrimData.value = true
                     getproducts()
                     ClearData()
                 })
+
+                
         }
 
         
          const getproducts = () => {
             axios.get('./php/getProducts.php')
-            .then((res)=>{
-                console.log(res)
-                elements = res.data
-                info.dataTable = elements
-                console.log(info.dataTable)                
+            .then((res)=>{ 
+                info.dataTable = res.data
+                if (Object.keys(info.dataTable).length > 0) {
+                    comfrimData.value = true
+                }
+
             })
         }
 
-         onMounted(() => {
-       
-            getproducts()
-            
-        })
-       
+        const select = (item) => {
+            info.selected = []
+
+            if(!info.selectAll){
+                info.selected = []
+                info.selectAll = false
+                return
+            }
+
+            if (info.selectAll) {
+                for (let i in item.id) {
+                    info.selected.push(item.id)
+                }  
+            }
+        }
+
+        const selectallfalse = (item) => {
+                info.selectAll = false
+                for (let i in item.id) {
+                    info.selected.push(item.id)
+                }
+        }
+
+        const generarCodebar = () => {
+            console.log(info.selected)
+        }
 
         /* generar codigo */
         const generateCode = (num) => {
@@ -122,6 +160,12 @@ createApp({
 
         }
 
+        onMounted(() => {
+            getSelect2()
+            getproducts()
+        })
+       
+
         return {
             getSelect,
             datos,
@@ -131,8 +175,12 @@ createApp({
             comfrinCode,
             generateCode,
             info,
-            comfrinData,
-            getproducts
+            getproducts,
+            select,
+            dataTable,
+            generarCodebar,
+            selectallfalse,
+            comfrimData
             
         }
 
