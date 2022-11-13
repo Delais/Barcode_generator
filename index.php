@@ -55,10 +55,10 @@ include_once('./php/connection.php')
 
 
     <div>
-    <table  v-if="comfrimData">
+    <table  v-if="comfrimData" >
         <tr>
             <th >
-            <input type="checkbox">
+            <input type="checkbox" @click="select" id="hola">
             </th>
             <th>#</th>
             <th>name</th>
@@ -66,9 +66,9 @@ include_once('./php/connection.php')
             <th>description</th>
             <th>code</th>
         </tr>
-        <tr v-for=" item in info.dataTable ">
+        <tr v-for=" item in info.dataTable " :id="item.id">
             <td >
-            <input type="checkbox" :value="item.id" v-model="info.selected" >
+            <input type="checkbox" :value="item.id" v-model="info.selected" :id="item.id" @click="selectallfalse">
             </td>
             <td>{{ item.id }}</td>
             <td>{{ item.name }}</td>

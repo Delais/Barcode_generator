@@ -17,16 +17,16 @@ createApp({
         const selectSubcategory = ref(false)
         const comfrinCode = ref(false)
         const comfrimData = ref(false)
-
+        const selectAll = ref(false)
         let data = reactive({
             subCategoryData: null,
-            category:null
+            category: null
         })
 
         let info = reactive({
             dataTable: null,
             selected: [],
-            selectAll: false
+
         })
 
         let dataTable = reactive({
@@ -46,7 +46,7 @@ createApp({
 
             axios.post('./php/selectData.php', form)
                 .then((res) => {
-                    
+
                     data.subCategoryData = res.data
 
                     if (Object.keys(data.subCategoryData).length > 0) {
@@ -58,9 +58,9 @@ createApp({
         const getSelect2 = () => {
 
             axios.get('./php/selectData2.php')
-            .then((res)=>{
-                data.category = res.data
-            })
+                .then((res) => {
+                    data.category = res.data
+                })
         }
 
 
@@ -78,55 +78,84 @@ createApp({
 
             axios.post('./php/saveProducts.php', form)
                 .then((res) => {
-                     Swal.fire({
+                    Swal.fire({
                         title: 'Datos Enviados',
                         icon: 'success'
-                    }) 
+                    })
                     comfrimData.value = true
                     getproducts()
                     ClearData()
                 })
 
-                
+
         }
 
-        
-         const getproducts = () => {
+
+        const getproducts = () => {
             axios.get('./php/getProducts.php')
-            .then((res)=>{ 
-                info.dataTable = res.data
-                if (Object.keys(info.dataTable).length > 0) {
-                    comfrimData.value = true
-                }
+                .then((res) => {
+                    info.dataTable = res.data
+                    if (info.dataTable.length > 0) {
+                        comfrimData.value = true
+                    }
 
-            })
+                })
         }
 
-        const select = (item) => {
+        const select = (e) => {
+
             info.selected = []
-
-            if(!info.selectAll){
+            if (!document.getElementById("hola").checked) {
                 info.selected = []
-                info.selectAll = false
-                return
-            }
 
-            if (info.selectAll) {
-                for (let i in item.id) {
-                    info.selected.push(item.id)
-                }  
+            } else {
+                for (let i = 1; i <= info.dataTable.length; i++) {
+                    info.selected.push(i.toString())
+
+                }
             }
+            //console.log(e.checked)
+            //selectAll.value = !selectAll.value
+            //console.log(selectAll.value)
+            //info.selected = []
+
+
+            console.log(document.getElementById("hola").checked)
+
+
         }
 
-        const selectallfalse = (item) => {
-                info.selectAll = false
-                for (let i in item.id) {
-                    info.selected.push(item.id)
-                }
+        const selectallfalse = () => {
+            selectAll.value = document.getElementById("hola").checked = false
+
         }
 
         const generarCodebar = () => {
-            console.log(info.selected)
+            
+            let dataProducts = []
+
+            if (info.selected.length == 0) {
+                Swal.fire({
+                    title: 'Tienes que selecionar al menos un producto',
+                    icon: 'warning'
+                })
+            } else {
+                for (let i = 0; i < info.selected.length; i++) {
+
+                    for (let j = 0; j < info.dataTable.length; j++) {
+
+                        if (info.selected[i] == info.dataTable[j].id) {
+                            dataProducts.push(info.dataTable[j]) 
+                        }
+
+                    }
+                }
+                
+             console.log(dataProducts)
+            
+            }
+
+
         }
 
         /* generar codigo */
@@ -164,7 +193,7 @@ createApp({
             getSelect2()
             getproducts()
         })
-       
+
 
         return {
             getSelect,
@@ -179,12 +208,13 @@ createApp({
             select,
             dataTable,
             generarCodebar,
-            selectallfalse,
-            comfrimData
-            
+            comfrimData,
+            selectAll,
+            selectallfalse
+
         }
 
     }
 
-    
+
 }).mount('#app')
