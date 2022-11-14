@@ -78,6 +78,7 @@ createApp({
 
             axios.post('./php/saveProducts.php', form)
                 .then((res) => {
+                    console.log(res)
                     Swal.fire({
                         title: 'Datos Enviados',
                         icon: 'success'
@@ -114,11 +115,6 @@ createApp({
 
                 }
             }
-            //console.log(e.checked)
-            //selectAll.value = !selectAll.value
-            //console.log(selectAll.value)
-            //info.selected = []
-
 
             console.log(document.getElementById("hola").checked)
 
@@ -131,8 +127,9 @@ createApp({
         }
 
         const generarCodebar = () => {
-            
-            let dataProducts = []
+            let dataProductsNames = new Array()
+            let dataProductsPrices = []
+            let dataProductsCodes = []
 
             if (info.selected.length == 0) {
                 Swal.fire({
@@ -145,14 +142,33 @@ createApp({
                     for (let j = 0; j < info.dataTable.length; j++) {
 
                         if (info.selected[i] == info.dataTable[j].id) {
-                            dataProducts.push(info.dataTable[j]) 
+                            dataProductsNames.push(info.dataTable[j].name)
+                            dataProductsPrices.push(info.dataTable[j].price)
+                            dataProductsCodes.push(info.dataTable[j].code)
+
                         }
 
                     }
                 }
-                
-             console.log(dataProducts)
-            
+
+
+
+                var datos = new Object();
+                datos.dataProductsNames = dataProductsNames
+                datos.dataProductsPrices = dataProductsPrices
+                datos.dataProductsCodes = dataProductsCodes
+                console.log(datos)
+
+
+                $.ajax({
+                    type: "POST",
+                    url: "./php/proceso.php",
+                    data: datos
+                })
+                    .then((res) => {
+                        console.log(res)
+                        window.location.href = './php/generatorBarcode.php'
+                    })
             }
 
 

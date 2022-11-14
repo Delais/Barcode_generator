@@ -2,6 +2,10 @@
 
 include_once('connection.php');
 
+foreach($_POST as $campo => $valor){
+    echo "- ". $campo ." = ". $valor;
+  }
+
 /* Leemos los datos que ,amda la peticion */
 
 $name = $_POST['name'];
