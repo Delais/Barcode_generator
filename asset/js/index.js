@@ -95,6 +95,7 @@ createApp({
         const getproducts = () => {
             axios.get('./php/getProducts.php')
                 .then((res) => {
+                    console.log(res)
                     info.dataTable = res.data
                     if (info.dataTable.length > 0) {
                         comfrimData.value = true
